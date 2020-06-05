@@ -8,6 +8,7 @@ build: build-protoc
 
 build-protoc:
 	python -m grpc_tools.protoc --proto_path=. --python_out=. --grpc_python_out=. tweet-gateway.proto
+	python -m grpc_tools.protoc --proto_path=. --go_out=. tweet-gateway.proto
 
 run:
 	docker run -it --rm -p 31337:31337 -v $(shell pwd):/tmp -e TG_CONFIG=/tmp/.secret ${NAME}:${TAG}
