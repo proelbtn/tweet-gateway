@@ -4,8 +4,12 @@
 package tweet_gateway
 
 import (
+	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -118,4 +122,84 @@ var fileDescriptor_0a2c6e576d127c43 = []byte{
 	0x19, 0xd4, 0x58, 0x77, 0x88, 0x65, 0x42, 0x6a, 0x5c, 0xac, 0x60, 0xdb, 0x85, 0x78, 0xf5, 0x90,
 	0xad, 0x93, 0xe2, 0xd3, 0x43, 0xd1, 0x97, 0xc4, 0x06, 0x76, 0x95, 0x31, 0x20, 0x00, 0x00, 0xff,
 	0xff, 0x2d, 0x9e, 0x1c, 0xcd, 0xac, 0x00, 0x00, 0x00,
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConnInterface
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion6
+
+// TweetGatewayClient is the client API for TweetGateway service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type TweetGatewayClient interface {
+	Tweet(ctx context.Context, in *TweetRequest, opts ...grpc.CallOption) (*TweetResponse, error)
+}
+
+type tweetGatewayClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewTweetGatewayClient(cc grpc.ClientConnInterface) TweetGatewayClient {
+	return &tweetGatewayClient{cc}
+}
+
+func (c *tweetGatewayClient) Tweet(ctx context.Context, in *TweetRequest, opts ...grpc.CallOption) (*TweetResponse, error) {
+	out := new(TweetResponse)
+	err := c.cc.Invoke(ctx, "/TweetGateway/tweet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// TweetGatewayServer is the server API for TweetGateway service.
+type TweetGatewayServer interface {
+	Tweet(context.Context, *TweetRequest) (*TweetResponse, error)
+}
+
+// UnimplementedTweetGatewayServer can be embedded to have forward compatible implementations.
+type UnimplementedTweetGatewayServer struct {
+}
+
+func (*UnimplementedTweetGatewayServer) Tweet(ctx context.Context, req *TweetRequest) (*TweetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Tweet not implemented")
+}
+
+func RegisterTweetGatewayServer(s *grpc.Server, srv TweetGatewayServer) {
+	s.RegisterService(&_TweetGateway_serviceDesc, srv)
+}
+
+func _TweetGateway_Tweet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TweetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TweetGatewayServer).Tweet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/TweetGateway/Tweet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TweetGatewayServer).Tweet(ctx, req.(*TweetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _TweetGateway_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "TweetGateway",
+	HandlerType: (*TweetGatewayServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "tweet",
+			Handler:    _TweetGateway_Tweet_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "tweet-gateway.proto",
 }
