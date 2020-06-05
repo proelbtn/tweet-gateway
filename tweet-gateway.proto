@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message TweetRequest {
+  string username = 1;
+  string content = 2;
+}
+
+message TweetResponse {
+}
+
+service TweetGateway {
+  rpc tweet(TweetRequest) returns (TweetResponse);
+}
